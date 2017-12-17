@@ -18,6 +18,7 @@ setlocal
 REM setting up environment if first run
 if not exist %~d0\logs (
 	mkdir logs
+	mkdir profiles
 REM	mkdir "dependence files"
 )
 
@@ -28,10 +29,10 @@ REM local computer file locations
 set localComputerPrepath=C:\Users\%USERNAME%
 
 REM location within storage device
-mkdir %profileName%-%date%
+mkdir %~d0\profiles\%profileName%-%date%
 mkdir %~d0\logs\%profileName%-%date%
 set profileFolder=%profileName%-%date%
-set flashDrivePrepath=%~d0\%profileFolder%
+set flashDrivePrepath=%~d0\profiles\%profileFolder%
 set flashDriveLogPrePath=%~d0\logs\%profileName%-%date%
 
 
@@ -53,14 +54,14 @@ robocopy %localComputerPrepath%\Videos %flashDrivePrepath%\Videos /MIR /NP /TEE 
 
 set chromeFolder="C:\Users\%USERNAME%\AppData\Local\Google\Chrome\User Data\Default"
 REM check if default folder is same on all computers
-set firefoxFolder="C:\Users\Dev\AppData\Roaming\Mozilla\Firefox\Profiles\s4bm1y53.default"
+set firefoxFolder="C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles\s4bm1y53.default"
 
 if exist %chromeFolder% (
-	copy %chromeFolder%\Bookmarks %flashDriveLogPrePath%
+	copy %chromeFolder%\Bookmarks %flashDrivePrepath%
 )
 
 if exist %firefoxFolder% (
-	copy %firefoxFolder\places.sqlite %flashDriveLogPrePath%
+	copy %firefoxFolder%\places.sqlite %flashDrivePrepath%
 )
 
 
