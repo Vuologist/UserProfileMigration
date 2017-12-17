@@ -16,8 +16,8 @@ REM create dependence files wtf am i suppose to create?!?!?
 setlocal
 
 REM setting up environment if first run
-if not exist %~d0\logs (
-	mkdir logs
+if not exist %~d0\ExportLogs (
+	mkdir ExportLogs
 	mkdir profiles
 REM	mkdir "dependence files"
 )
@@ -30,10 +30,10 @@ set localComputerPrepath=C:\Users\%USERNAME%
 
 REM location within storage device
 mkdir %~d0\profiles\%profileName%-%date%
-mkdir %~d0\logs\%profileName%-%date%
+mkdir %~d0\ExportLogs\%profileName%-%date%
 set profileFolder=%profileName%-%date%
 set flashDrivePrepath=%~d0\profiles\%profileFolder%
-set flashDriveLogPrePath=%~d0\logs\%profileName%-%date%
+set flashDriveLogPrePath=%~d0\ExportLogs\%profileName%-%date%
 
 
 robocopy %localComputerPrepath%\Desktop %flashDrivePrepath%\Desktop /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\DesktopLog.txt
