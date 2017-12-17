@@ -26,44 +26,30 @@ set profileName=%USERNAME%
 set date=%date:~-4,4%%date:~-7,2%%date:~-10,2%
 
 REM local computer file locations
-set desktop=C:\Users\%USERNAME%\Desktop
-set documents=C:\Users\%USERNAME%\Documents
-set downloads=C:\Users\%USERNAME%\Downloads
-set favorities=C:\Users\%USERNAME%\Favorites
-set microsoftEdgeBackups=C:\Users\%USERNAME%\MicrosoftEdgeBackups
-set music=C:\Users\%USERNAME%\Music
-set pictures=C:\Users\%USERNAME%\Pictures
-set vidoes=C:\Users\%USERNAME%\Vidoes
+set localComputerPrepath=C:\Users\%USERNAME%
 
 REM location within storage device
 mkdir "%profileName% - %date%"
 mkdir %~d0\logs\%profileName% - %date%
 set profileFolder="%profileName% - %date%"
-set fdesktop=%~d0\%profileFolder%\Desktop
-set fdocuments=%~d0\%profileFolder%\Documents
-set fdownloads=%~d0\%profileFolder%\Downloads
-set ffavorities=%~d0\%profileFolder%\Favorites
-set fmicrosoftEdgeBackups=%~d0\%profileFolder%\MicrosoftEdgeBackups
-set fmusic=%~d0\%profileFolder%\Music
-set fpictures=%~d0\%profileFolder%\Pictures
-set fvidoes=%~d0\%profileFolder%\Vidoes
+set flashDrivePrepath=%~d0\%profileFolder%
 
 
-robocopy %desktop% %fdesktop% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Desktop"
+robocopy %localComputerPrepath%\Desktop %flashDrivePrepath%\Desktop /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Desktop"
 
-robocopy %documents% %fdocuments% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Documents"
+robocopy %localComputerPrepath%\Documents %flashDrivePrepath%\Documents /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Documents"
 
-robocopy %downloads% %fdownloads% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Downloads"
+robocopy %localComputerPrepath%\Downloads %flashDrivePrepath%\Downloads /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Downloads"
 
-robocopy %favorities% %ffavorities% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Favorites"
+robocopy %localComputerPrepath%\Favorites %flashDrivePrepath%\Favorites /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Favorites"
 
-robocopy %microsoftEdgeBackups% %fmicrosoftEdgeBackups% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%MicrosoftEdgeBackups"
+robocopy %localComputerPrepath%\MicrosoftEdgeBackups %flashDrivePrepath%\MicrosoftEdgeBackups /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%MicrosoftEdgeBackups"
 
-robocopy %music% %fmusic% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Music"
+robocopy %localComputerPrepath%\Music %flashDrivePrepath%\Music /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Music"
 
-robocopy %pictures% %fpictures% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Pictures"
+robocopy %localComputerPrepath%\Pictures %flashDrivePrepath%\Pictures /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Pictures"
 
-robocopy %vidoes% %fvidoes% /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Videos"
+robocopy %localComputerPrepath%\Videos %flashDrivePrepath%\Videos /MIR /NP /TEE /LOG+:"%~d0\%logs%\%profileName%Videos"
 
 
 
