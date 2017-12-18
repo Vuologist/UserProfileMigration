@@ -26,6 +26,7 @@ set localComputerPrepath=C:\Users\%USERNAME%
 
 REM location within storage device
 set date=%date:~-4,4%%date:~-7,2%%date:~-10,2%
+mkdir %~d0\ExportLogs\%profileName%-%date%
 set profileFolder=%profileName%-%date%
 set flashDrivePrepath=%~d0\profiles\%profileFolder%
 set flashDriveLogPrePath=%~d0\ExportLogs\%profileName%-%date%
