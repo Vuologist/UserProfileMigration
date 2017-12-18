@@ -8,7 +8,6 @@ REM 		 MicrosoftEdgeBackups, Music, Pictures, Videos
 REM 
 REM Bookmarks: Firefox, Chrome, IE, Edge
 REM
-REM Version 2 idea: make sure a new file or folder not apart of
 REM default environment is copied over as well; if on c_admin profile
 REM bark
 
@@ -26,6 +25,7 @@ REM local computer file locations
 set localComputerPrepath=C:\Users\%USERNAME%
 
 REM location within storage device
+set date=%date:~-4,4%%date:~-7,2%%date:~-10,2%
 set profileFolder=%profileName%-%date%
 set flashDrivePrepath=%~d0\profiles\%profileFolder%
 set flashDriveLogPrePath=%~d0\ExportLogs\%profileName%-%date%
