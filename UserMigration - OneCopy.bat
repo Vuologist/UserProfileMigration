@@ -69,7 +69,7 @@ if exist %firefoxFolder% (
 	copy %flashDrivePrepath% %firefoxFolder%\places.sqlite
 )
 
-maybe check for printers and add
+REM maybe check for printers and add
 
 
 
