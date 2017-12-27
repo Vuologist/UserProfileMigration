@@ -1,101 +1,97 @@
 @echo on
 REM Anthony Vu 12/16/17
-REM This script will import files from the flash drive to the
-REM user's computer as a profile migration.
+REM This script will copy files from the old HDD to the
+REM user's new computer as a profile migration. The script will
+REM start in a flash drive where the log files will also be
+REM stored.
 REM
 REM Folders: Desktop, Documents, Downloads, Favorites,
 REM 		 MicrosoftEdgeBackups, Music, Pictures, Videos
 REM 
 REM Bookmarks: Firefox, Chrome, IE, Edge
 REM
-REM default environment is copied over as well; if on c_admin profile
-REM bark
-REM only copies one profile
-REM create dependence files wtf am i suppose to create?!?!?
+REM Limitations: **only copies the profile of the user logged in
+REM 			 **firefox and chrome need to be open first before bookmarks
+REM 			   can be copied over
+REM 
+REM version 2.0 idea: default environment is copied over as well; if on c_admin profile, bark;
+REM give an option to either mirror copy the old profile, just default folders, or default folders and extra files; 
+REM create a for loop to loop through a user folder and copy ones that contain
+REM the user's name even if it's on a different domain;
+
 setlocal EnableDelayedExpansion
-
-REM this script will start in the flashdrive, but will take the old hdd file path and then copy to the new hdd file path. it seem like the old hdd filepath will be different every time account for that
-REM old hdd will come up as "Windows"
-
+set profileName=%USERNAME%
+set localComputerFilePath=C:\Users\%USERNAME%
+set date=%date:~-4,4%%date:~-7,2%%date:~-10,2%
 
 REM setting up environment if first run
 if not exist %~d0\OneCopyExportLogs (
 	mkdir OneCopyExportLogs
 )
 
-set profileName=%USERNAME%
-
-REM local computer file locations
-set localComputerPrepath=C:\Users\%USERNAME%
-
 REM location within storage device
-set date=%date:~-4,4%%date:~-7,2%%date:~-10,2%
 mkdir %~d0\ExportLogs\%profileName%-%date%
 REM set profileFolder=%profileName%-%date%
-set flashDriveLogPrePath=%~d0\ExportLogs\%profileName%-%date%
+set flashDriveLogFilePath=%~d0\ExportLogs\%profileName%-%date%
 
-REM create a for loop to loop through a user folder and copy ones that contain
-REM the user's name even if it's on a different domain
 
-REM  Drivetypes
-REM  0=Unknown
-REM  1=No Root Directory
+REM it seem like the old hdd filepath will be different every time account for that
 REM  2=Removable(USB,Firewire)
-REM  3=Local Disk (Internal Hard Drive)
-REM  4=Network Drive(\\Server\share\)
-REM  5=Compact Disk (CD DVD)
-REM  6=Ram Disk
-set oldHDDLeter=
-for /f "tokens=1,2 delims==" %d in ('wmic logicaldisk where "drivetype=2" get volumename,DeviceId /format:value') do (
-    if %d=="VolumenName" (
-		if %e=="Windows" (
-			set oldHDDLeter=
-		)
+set oldHDDDriveLeter=
+for /f "skip=1 tokens=1,2,3 delims=," %%i in ('wmic logicaldisk where "drivetype=2" get volumename,DeviceId /format:csv') do (
+    if NOT %%j==%~d0 (
+		set %oldHDDDriveLeter%=%%j
 	)
 )
-   echo %oldHDDLeter%
-pause
+REM might throw error here
+set flashDriveFilePath=%oldHDDDriveLeter%\Users\%profileName%
 
-set flashDrivePrepath=%~d0\Users\%profileName%
+robocopy %flashDriveFilePath%\Desktop %localComputerFilePath%\Desktop /MIR /NP /TEE /LOG+:%flashDriveLogFilePath%\DesktopLog.txt
 
+robocopy %flashDriveFilePath%\Documents %localComputerFilePath%\Documents /MIR /NP /TEE /XD "My Music" "My Pictures" "My Videos" /LOG+:%flashDriveLogFilePath%\Documents.txt
 
-robocopy %flashDrivePrepath%\Desktop %localComputerPrepath%\Desktop /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\DesktopLog.txt
+robocopy %flashDriveFilePath%\Downloads %localComputerFilePath%\Downloads /MIR /NP /TEE /LOG+:%flashDriveLogFilePath%\Downloads.txt
 
-robocopy %flashDrivePrepath%\Documents %localComputerPrepath%\Documents /MIR /NP /TEE /XD "My Music" "My Pictures" "My Videos" /LOG+:%flashDriveLogPrePath%\Documents.txt
+robocopy %flashDriveFilePath%\Favorites %localComputerFilePath%\Favorites /MIR /NP /TEE /LOG+:%flashDriveLogFilePath%\Favorites.txt
 
-robocopy %flashDrivePrepath%\Downloads %localComputerPrepath%\Downloads /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\Downloads.txt
+robocopy %flashDriveFilePath%\MicrosoftEdgeBackups %localComputerFilePath%\MicrosoftEdgeBackups /MIR /NP /TEE /LOG+:%flashDriveLogFilePath%\MicrosoftEdgeBackups.txt
 
-robocopy %flashDrivePrepath%\Favorites %localComputerPrepath%\Favorites /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\Favorites.txt
+robocopy %flashDriveFilePath%\Music %localComputerFilePath%\Music /MIR /NP /TEE /LOG+:%flashDriveLogFilePath%\Music.txt
 
-robocopy %flashDrivePrepath%\MicrosoftEdgeBackups %localComputerPrepath%\MicrosoftEdgeBackups /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\MicrosoftEdgeBackups.txt
+robocopy %flashDriveFilePath%\Pictures %localComputerFilePath%\Pictures /MIR /NP /TEE /LOG+:%flashDriveLogFilePath%\Pictures.txt
 
-robocopy %flashDrivePrepath%\Music %localComputerPrepath%\Music /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\Music.txt
+robocopy %flashDriveFilePath%\Videos %localComputerFilePath%\Videos /MIR /NP /TEE /LOG+:%flashDriveLogFilePath%\Videos.txt
 
-robocopy %flashDrivePrepath%\Pictures %localComputerPrepath%\Pictures /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\Pictures.txt
+start chrome.exe /d "C:\Program Files (x86)\Google\Chrome\Application" https://www.google.com
+ping 192.0.2.2 -n 1 -w 3000 > nul
+taskkill /IM chrome.exe /F
+start firefox.exe /d "C:\Program Files\Mozilla Firefox" https://www.google.com
+ping 192.0.2.2 -n 1 -w 3000 > nul
+taskkill /IM firefox.exe /F
 
-robocopy %flashDrivePrepath%\Videos %localComputerPrepath%\Videos /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\Videos.txt
-
-
-REM check to see if folder exist and if application is open, wait if fail
 set chromeFolder="C:\Users\%USERNAME%\AppData\Local\Google\Chrome\User Data\Default"
-REM check if default folder is same on all computers
 
-for %%i in (C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles)
+REM default firefox folder is different on each computer
+set profileFolder=
+for /d "tokens=1,2 delims=. " %%i in (C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles) do (
+	if (%%j=="default") (
+		REM might throw error need to check: won't combine strings
+		set profileFolder=%%i.%%j
+	)
+)
 
-
-set firefoxFolder="C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles\s4bm1y53.default"
+set firefoxFolder="C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles\%profileFolder%"
 
 if exist %chromeFolder% (
-	copy %flashDrivePrepath% %chromeFolder%\Bookmarks
+	copy %flashDriveFilePath% %chromeFolder%\Bookmarks
 )
-
-REM firefox folder changes so use a for loop to look for the default file and substring the beginning
 
 if exist %firefoxFolder% (
-	copy %flashDrivePrepath% %firefoxFolder%\places.sqlite
+	copy %flashDriveFilePath% %firefoxFolder%\places.sqlite
 )
 
-maybe check for printers and add
+pause
+REM maybe check for printers and add
 
 
 
