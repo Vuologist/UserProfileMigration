@@ -10,10 +10,9 @@ REM Bookmarks: Firefox, Chrome, IE, Edge
 REM
 REM default environment is copied over as well; if on c_admin profile
 REM bark
-
 REM only copies one profile
 REM create dependence files wtf am i suppose to create?!?!?
-setlocal
+setlocal EnableDelayedExpansion
 
 REM this script will start in the flashdrive, but will take the old hdd file path and then copy to the new hdd file path. it seem like the old hdd filepath will be different every time account for that
 REM old hdd will come up as "Windows"
@@ -33,8 +32,31 @@ REM location within storage device
 set date=%date:~-4,4%%date:~-7,2%%date:~-10,2%
 mkdir %~d0\ExportLogs\%profileName%-%date%
 REM set profileFolder=%profileName%-%date%
-set flashDrivePrepath=%~d0\Users\%profileName%
 set flashDriveLogPrePath=%~d0\ExportLogs\%profileName%-%date%
+
+REM create a for loop to loop through a user folder and copy ones that contain
+REM the user's name even if it's on a different domain
+
+REM  Drivetypes
+REM  0=Unknown
+REM  1=No Root Directory
+REM  2=Removable(USB,Firewire)
+REM  3=Local Disk (Internal Hard Drive)
+REM  4=Network Drive(\\Server\share\)
+REM  5=Compact Disk (CD DVD)
+REM  6=Ram Disk
+set oldHDDLeter=
+for /f "tokens=1,2 delims==" %d in ('wmic logicaldisk where "drivetype=2" get volumename,DeviceId /format:value') do (
+    if %d=="VolumenName" (
+		if %e=="Windows" (
+			set oldHDDLeter=
+		)
+	)
+)
+   echo %oldHDDLeter%
+pause
+
+set flashDrivePrepath=%~d0\Users\%profileName%
 
 
 robocopy %flashDrivePrepath%\Desktop %localComputerPrepath%\Desktop /MIR /NP /TEE /LOG+:%flashDriveLogPrePath%\DesktopLog.txt
@@ -57,6 +79,10 @@ robocopy %flashDrivePrepath%\Videos %localComputerPrepath%\Videos /MIR /NP /TEE 
 REM check to see if folder exist and if application is open, wait if fail
 set chromeFolder="C:\Users\%USERNAME%\AppData\Local\Google\Chrome\User Data\Default"
 REM check if default folder is same on all computers
+
+for %%i in (C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles)
+
+
 set firefoxFolder="C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles\s4bm1y53.default"
 
 if exist %chromeFolder% (
@@ -70,10 +96,6 @@ if exist %firefoxFolder% (
 )
 
 maybe check for printers and add
-
-
-
-
 
 
 
